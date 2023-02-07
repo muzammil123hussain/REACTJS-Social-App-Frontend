@@ -17,7 +17,7 @@ const ModalOverlay = (props) => {
         }
       >
         <div className={`modal__content ${props.contentClass}`}>
-          {props.childern}
+          {props.children}
         </div>
         <footer className={`modal__footer ${props.footerClass}`}>
           {props.footer}

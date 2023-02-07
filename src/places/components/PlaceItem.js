@@ -6,7 +6,7 @@ import Modal from "../../shared/components/UIElements/Modal";
 import "./PlaceItem.css";
 
 const PlaceItem = (props) => {
-  const [showMap, setShowMap] = useState(true);
+  const [showMap, setShowMap] = useState(false);
 
   const openMapHandler = () => setShowMap(true);
 
@@ -14,7 +14,18 @@ const PlaceItem = (props) => {
 
   return (
     <React.Fragment>
-
+      <Modal
+        show={showMap}
+        onCancel={closeMapHandler}
+        header={props.address}
+        contentClass="place-item__modal-content"
+        footerClass="place-item__modal-actions"
+        footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
+      >
+        <div className="map-container">
+          <h2>THE MAP!</h2>
+        </div>
+      </Modal>
 
       <li className="place-item">
         <Card className="place-item__content">
@@ -35,19 +46,6 @@ const PlaceItem = (props) => {
           </div>
         </Card>
       </li>
-
-      <Modal
-        show={showMap}
-        onCancel={closeMapHandler}
-        header={props.address}
-        contentClass="place-item__modal-content"
-        footerClass="place-item__modal-actions"
-        footer={<Button onClick={closeMapHandler}>CLOSE</Button>}
-      >
-        <div className="map-container">
-          <h2>THE MAP!</h2>
-        </div>
-      </Modal>
     </React.Fragment>
   );
 };

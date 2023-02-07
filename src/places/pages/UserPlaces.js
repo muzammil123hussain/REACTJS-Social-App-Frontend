@@ -1,4 +1,6 @@
 import React from "react";
+import { useParams } from "react-router-dom";
+
 import PlaceList from "../components/PlaceList";
 
 
@@ -7,32 +9,34 @@ const UserPlaces = () => {
     {
       id: "p1",
       image:
-      "https://en.wikishia.net/images/thumb/b/b0/The_aerial_view_of_the_holy_shrine_of_Imam_Ali.jpg/800px-The_aerial_view_of_the_holy_shrine_of_Imam_Ali.jpg",
-      title: "NAJAF",
-      description: "Best place on earth",
-      address: "Najaf,Iraq",
+      "https://upload.wikimedia.org/wikipedia/commons/d/d4/View_of_Makli_by_Usman_Ghani_%28cropped%29.jpg",
+      title: "Makli Necropolis",
+      description: "Makli Necropolis is one of the largest funerary sites in the world, spread over an area of 10 kilometres near the city of Thatta, in the Pakistani province of Sindh. The site houses approximately 500,000 to 1 million tombs built over the course of a 400-year period.",
+      address: "Makli, Thatta, Sindh",
       location: {
-        lat: 32.0217066,
-        lang: 44.3294907,
+        lat: 24.7518586,
+        lang: 67.8980076,
       },
       creator: "u1",
     },
     {
       id: "p2",
       image:
-        "https://en.wikishia.net/images/thumb/b/b0/The_aerial_view_of_the_holy_shrine_of_Imam_Ali.jpg/800px-The_aerial_view_of_the_holy_shrine_of_Imam_Ali.jpg",
-      title: "NAJAF",
-      description: "Best place on earth",
-      address: "Najaf,Iraq",
+        "https://stdc.gos.pk/media/com_solidres/assets/images/system/keenjharlake03.jpg",
+      title: "KARLI",
+      description: "Keenjhar Lake commonly called Malik Lake is located in Thatta District of Sindh the province of Pakistan. It is situated about 36 kilometres from the city of Thatta. It is the largest fresh water lake in Pakistan and an important source of drinking water for Thatta District and Karachi city.",
+      address: "Thatta, Sindh",
       location: {
-        lat: 32.0217066,
-        lang: 44.3294907,
+        lat: 24.9400821,
+        lang: 68.0524276,
       },
       creator: "u2",
     },
   ];
 
-  return <PlaceList items={PLACES} />;
+  const userId =  useParams().userId;
+  const filterdPlaces = PLACES.filter(place => place.creator === userId)
+  return <PlaceList items={filterdPlaces} />;
 };
 
 export default UserPlaces;

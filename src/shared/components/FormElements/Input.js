@@ -8,7 +8,7 @@ const inputReducer = (state, action) => {
     case "CHANGE":
       return {
         ...state,
-        value: action.value,
+        value: action.val,
         isValid: validate(action.val, action.validators),
       };
     case "TOUCH":
@@ -28,12 +28,12 @@ const Input = (props) => {
     isValid: false,
   });
 
-  const { id, OnInput } = props;
+  const { id, onInput } = props;
   const { value, isValid } = inputState;
 
   useEffect(() => {
-    OnInput(id, value, isValid)
-  }, [id, value, isValid, OnInput])
+    onInput(id, value, isValid)
+  }, [id, value, isValid, onInput])
 
   const changeHandler = (event) => {
     dispatch({

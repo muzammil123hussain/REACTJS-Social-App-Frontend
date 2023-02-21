@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { useForm } from "../../shared/hooks/form-hook";
 import Button from "../../shared/components/FormElements/Button";
+import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
 import {
   VALIDATOR_MINLENGTH,
@@ -48,11 +49,11 @@ const UpdatePlace = () => {
   const [formState, inputHandler, setFormData] = useForm(
     {
       title: {
-        value: '',
+        value: "",
         isValid: false,
       },
       description: {
-        value: '',
+        value: "",
         isValid: false,
       },
     },
@@ -62,19 +63,21 @@ const UpdatePlace = () => {
   const place = PLACES.find((p) => p.id === placeId);
 
   useEffect(() => {
-    setFormData(
-      {
-        title: {
-          value: place.title,
-          isValid: true,
+    if (place) {
+      setFormData(
+        {
+          title: {
+            value: place.title,
+            isValid: true,
+          },
+          description: {
+            value: place.description,
+            isValid: true,
+          },
         },
-        description: {
-          value: place.description,
-          isValid: true,
-        }
-      },
-      true
-    );
+        true
+      );
+    }
     setIsLoading(false);
   }, [setFormData, place]);
 
@@ -86,17 +89,19 @@ const UpdatePlace = () => {
   if (!place) {
     return (
       <div className="center">
-        <h2>No Place Found</h2>
+        <Card>
+          <h2>No Place Found</h2>
+        </Card>
       </div>
     );
   }
 
-  if(isLoading){
+  if (isLoading) {
     return (
-        <div className="center">
-          <h2>Loading.....</h2>
-        </div>
-      );
+      <div className="center">
+        <h2>Loading.....</h2>
+      </div>
+    );
   }
 
   return (

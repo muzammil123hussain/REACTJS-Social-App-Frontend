@@ -4,6 +4,7 @@ import { AuthContext } from "../../context/auth-context";
 
 import "./NavigationLinks.css";
 
+
 const NavigationLinks = (props) => {
   const auth = useContext(AuthContext);
 

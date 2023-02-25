@@ -55,9 +55,35 @@ const Auth = () => {
     setIsLoginMode((prevMode) => !prevMode);
   };
 
-  const authSubmitHandler = (event) => {
+  const authSubmitHandler = async (event) => {
     event.preventDefault();
+
     console.log(formState.inputs); // send this to the backend!
+
+    var myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
+
+    var raw = JSON.stringify({
+      name: formState.inputs.name.value,
+      email: formState.inputs.email.value,
+      password: formState.inputs.password.value,
+    });
+
+    var requestOptions = {
+      method: "POST",
+      headers: myHeaders,
+      body: raw,
+      redirect: "follow",
+    };
+    try {
+      const response = await fetch(
+        "http://localhost:5000/api/users/signup",
+        requestOptions
+      );
+      console.log(response.json());
+    } catch (error) {
+      console.log("error", error);
+    }
     auth.login();
   };
 

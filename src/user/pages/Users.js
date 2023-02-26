@@ -1,17 +1,48 @@
-import React from 'react';
-import UserList from '../components/UsersList';
+import React, { useEffect, useState } from "react";
+import UserList from "../components/UsersList";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 
 const Users = () => {
-  const USERS = [
-    {
-      id: 'u1',
-      name:'Muzammil',
-      image: 'https://img.freepik.com/free-photo/half-profile-image-handsome-young-caucasian-man-with-good-skin-brown-eyes-black-stylish-hair-stubble-posing-isolated-against-blank-wall-looking-front-him-smiling_343059-4560.jpg',
-      placeCount: '3'
-    }
-  ]
+  const [isLoading, setIsLoading] = useState(false);
+  const [isError, setIsError] = useState();
+  const [loadedUsers, setLoadedUsers] = useState([]);
 
-  return <UserList items={USERS} />
+  useEffect(() => {
+    const sendRequest = async () => {
+      setIsLoading(true);
+      try {
+        const response = await fetch("http://localhost:5000/api/users");
+        const responseJson = await response.json();
+
+        if (!response.ok) {
+          throw new Error(responseJson.message);
+        }
+
+        setLoadedUsers(responseJson.users);
+      } catch (error) {
+        setIsError(error.message || "Something went wrong in GET USER process");
+      }
+      setIsLoading(false);
+    };
+    console.log(loadedUsers);
+    sendRequest();
+  }, []);
+
+  const errorHandler = () => {
+    setIsError(null);
+  };
+  return (
+    <React.Fragment>
+      {isError && <ErrorModal error={isError} onClear={errorHandler} />}
+      {isLoading && (
+        <div className="center">
+          <LoadingSpinner asOverlay />
+        </div>
+      )}
+      {!isLoading && loadedUsers && <UserList items={loadedUsers} />}
+    </React.Fragment>
+  );
 };
 
 export default Users;

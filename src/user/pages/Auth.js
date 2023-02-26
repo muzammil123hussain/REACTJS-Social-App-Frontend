@@ -61,42 +61,54 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
-
-    console.log(formState.inputs); // send this to the backend!
-    if (isLoginMode) {
-    } else {
-      try {
-        setIsLoading(true);
-        var myHeaders = new Headers();
-        myHeaders.append("Content-Type", "application/json");
-
-        var raw = JSON.stringify({
-          name: formState.inputs.name.value,
+    setIsLoading(true);
+    try {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+      var response, raw, requestOptions;
+      if (isLoginMode) {
+        raw = JSON.stringify({
           email: formState.inputs.email.value,
           password: formState.inputs.password.value,
         });
-
-        var requestOptions = {
+        requestOptions = {
           method: "POST",
           headers: myHeaders,
           body: raw,
           redirect: "follow",
         };
-        const response = await fetch(
+        response = await fetch(
+          "http://localhost:5000/api/users/login",
+          requestOptions
+        );
+      } else {
+        raw = JSON.stringify({
+          name: formState.inputs.name.value,
+          email: formState.inputs.email.value,
+          password: formState.inputs.password.value,
+        });
+
+        requestOptions = {
+          method: "POST",
+          headers: myHeaders,
+          body: raw,
+          redirect: "follow",
+        };
+        response = await fetch(
           "http://localhost:5000/api/users/signup",
           requestOptions
         );
-        const responseJson = await response.json();
-        if (!response.ok) {
-          throw new Error(responseJson.message);
-        }
-        setIsLoading(false);
-        auth.login();
-      } catch (error) {
-        console.log("error", error);
-        setIsError(error.message || "Something went wrong in SignUP process");
-        setIsLoading(false);
       }
+      const responseJson = await response.json();
+      if (!response.ok) {
+        throw new Error(responseJson.message);
+      }
+      setIsLoading(false);
+      auth.login();
+    } catch (error) {
+      console.log("error", error);
+      setIsError(error.message || "Something went wrong in Auth process");
+      setIsLoading(false);
     }
   };
 

@@ -80,7 +80,7 @@ const Auth = () => {
           raw,
           myHeaders
         );
-        auth.login();
+        auth.login(response.user.id);
       } catch (err) {}
     } else {
       try {
@@ -96,7 +96,7 @@ const Auth = () => {
           raw,
           myHeaders
         );
-        auth.login();
+        auth.login(response.user.id);
       } catch (err) {}
     }
   };

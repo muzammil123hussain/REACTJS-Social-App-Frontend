@@ -16,14 +16,18 @@ import MainNavigation from "./shared/components/Navigation/MainNavigation";
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [userID, setUserID] = useState(null);
+
   let routes;
 
-  const login = useCallback(() => {
+  const login = useCallback((userID) => {
     setIsLoggedIn(true);
+    setUserID(userID);
   });
 
   const logout = useCallback(() => {
     setIsLoggedIn(false);
+    setUserID(null);
   });
 
   if (isLoggedIn) {
@@ -63,7 +67,12 @@ const App = () => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn: isLoggedIn, login: login, logout: logout }}
+      value={{
+        isLoggedIn: isLoggedIn,
+        userID: userID,
+        login: login,
+        logout: logout,
+      }}
     >
       <Router>
         <MainNavigation />

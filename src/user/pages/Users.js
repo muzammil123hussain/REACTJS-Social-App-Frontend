@@ -2,39 +2,26 @@ import React, { useEffect, useState } from "react";
 import UserList from "../components/UsersList";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import { useHttpClient } from "../../shared/hooks/http-hook";
 
 const Users = () => {
-  const [isLoading, setIsLoading] = useState(false);
-  const [isError, setIsError] = useState();
   const [loadedUsers, setLoadedUsers] = useState([]);
+  const { isLoading, isError, sendRequest, clearError } = useHttpClient();
 
   useEffect(() => {
-    const sendRequest = async () => {
-      setIsLoading(true);
+    const fetchUsers = async () => {
       try {
-        const response = await fetch("http://localhost:5000/api/users");
-        const responseJson = await response.json();
-
-        if (!response.ok) {
-          throw new Error(responseJson.message);
-        }
-
-        setLoadedUsers(responseJson.users);
-      } catch (error) {
-        setIsError(error.message || "Something went wrong in GET USER process");
-      }
-      setIsLoading(false);
+        const response = await sendRequest("http://localhost:5000/api/users");
+        console.log(response);
+        setLoadedUsers(response.users);
+      } catch (error) {}
     };
-    console.log(loadedUsers);
-    sendRequest();
-  }, []);
+    fetchUsers();
+  }, [sendRequest]);
 
-  const errorHandler = () => {
-    setIsError(null);
-  };
   return (
     <React.Fragment>
-      {isError && <ErrorModal error={isError} onClear={errorHandler} />}
+      {isError && <ErrorModal error={isError} onClear={clearError} />}
       {isLoading && (
         <div className="center">
           <LoadingSpinner asOverlay />

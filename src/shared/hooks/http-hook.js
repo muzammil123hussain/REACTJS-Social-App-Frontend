@@ -20,18 +20,24 @@ export const useHttpClient = () => {
           headers,
           signal: httpClientAbortCtrl.signal,
         });
+
         const responseJson = await response.json();
+
+        activeHttpRequests.current = activeHttpRequests.current.filter(
+          (reqCtrl) => reqCtrl !== httpClientAbortCtrl
+        );
+
         if (!response.ok) {
           throw new Error(responseJson.message);
         }
-        return responseJson;
         setIsLoading(false);
+        return responseJson;
       } catch (err) {
         console.log("error", err);
         setIsError(err.message || "Something went wrong in Auth process");
         setIsLoading(false);
+        throw err;
       }
-      setIsLoading(false);
     },
     []
   );
@@ -47,5 +53,6 @@ export const useHttpClient = () => {
       });
     };
   }, []);
+
   return { isLoading, isError, sendRequest, clearError };
 };

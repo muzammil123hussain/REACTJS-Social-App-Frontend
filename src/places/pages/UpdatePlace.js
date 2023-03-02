@@ -1,9 +1,14 @@
 import React, { useEffect, useState } from "react";
+import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useForm } from "../../shared/hooks/form-hook";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
 import Input from "../../shared/components/FormElements/Input";
+import { useHttpClient } from "../../shared/hooks/http-hook";
+import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
+import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+
 import {
   VALIDATOR_MINLENGTH,
   VALIDATOR_REQUIRE,
@@ -11,40 +16,12 @@ import {
 
 import "./NewPlace.css";
 
-const PLACES = [
-  {
-    id: "p1",
-    image:
-      "https://upload.wikimedia.org/wikipedia/commons/d/d4/View_of_Makli_by_Usman_Ghani_%28cropped%29.jpg",
-    title: "Makli Necropolis",
-    description:
-      "Makli Necropolis is one of the largest funerary sites in the world, spread over an area of 10 kilometres near the city of Thatta, in the Pakistani province of Sindh. The site houses approximately 500,000 to 1 million tombs built over the course of a 400-year period.",
-    address: "Makli, Thatta, Sindh",
-    location: {
-      lat: 24.7518586,
-      lang: 67.8980076,
-    },
-    creator: "u1",
-  },
-  {
-    id: "p2",
-    image:
-      "https://stdc.gos.pk/media/com_solidres/assets/images/system/keenjharlake03.jpg",
-    title: "KARLI",
-    description:
-      "Keenjhar Lake commonly called Malik Lake is located in Thatta District of Sindh the province of Pakistan. It is situated about 36 kilometres from the city of Thatta. It is the largest fresh water lake in Pakistan and an important source of drinking water for Thatta District and Karachi city.",
-    address: "Thatta, Sindh",
-    location: {
-      lat: 24.9400821,
-      lang: 68.0524276,
-    },
-    creator: "u2",
-  },
-];
-
 const UpdatePlace = () => {
+  const history = useHistory();
   const placeId = useParams().placeId;
-  const [isLoading, setIsLoading] = useState(true);
+  const [loadedPlace, setLoadedPlace] = useState([]);
+
+  const { isLoading, isError, sendRequest, clearError } = useHttpClient();
 
   const [formState, inputHandler, setFormData] = useForm(
     {
@@ -60,77 +37,103 @@ const UpdatePlace = () => {
     false
   );
 
-  const place = PLACES.find((p) => p.id === placeId);
-
   useEffect(() => {
-    if (place) {
-      setFormData(
-        {
-          title: {
-            value: place.title,
-            isValid: true,
+    const fetchPlace = async () => {
+      try {
+        const response = await sendRequest(
+          "http://localhost:5000/api/places/" + placeId
+        );
+        console.log(response.place);
+        setLoadedPlace(response.place);
+        setFormData(
+          {
+            title: {
+              value: response.place.title,
+              isValid: true,
+            },
+            description: {
+              value: response.place.description,
+              isValid: true,
+            },
           },
-          description: {
-            value: place.description,
-            isValid: true,
-          },
-        },
-        true
-      );
-    }
-    setIsLoading(false);
-  }, [setFormData, place]);
+          true
+        );
+      } catch (error) {}
+    };
+    fetchPlace();
+  }, [sendRequest, placeId, setFormData]);
 
-  const placeUpdateSubmitHandler = (event) => {
+  const placeUpdateSubmitHandler = async (event) => {
     event.preventDefault();
-    console.log(formState.inputs); // send this to the backend!
+    try {
+      var myHeaders = new Headers();
+      myHeaders.append("Content-Type", "application/json");
+
+      // eslint-disable-next-line
+      var response, raw;
+
+      raw = JSON.stringify({
+        title: formState.inputs.title.value,
+        description: formState.inputs.description.value,
+      });
+
+      response = await sendRequest(
+        "http://localhost:5000/api/places/" + loadedPlace.id,
+        "PATCH",
+        raw,
+        myHeaders
+      );
+      history.push("/");
+    } catch (err) {}
   };
 
-  if (!place) {
+  if (isLoading) {
+    return (
+      <div className="center">
+        <LoadingSpinner asOverlay />
+      </div>
+    );
+  }
+
+  if (!loadedPlace && isError) {
     return (
       <div className="center">
         <Card>
-          <h2>No Place Found</h2>
+          <ErrorModal error={isError} onClear={clearError} />
         </Card>
       </div>
     );
   }
 
-  if (isLoading) {
-    return (
-      <div className="center">
-        <h2>Loading.....</h2>
-      </div>
-    );
-  }
-
   return (
-    <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
-      <Input
-        id="title"
-        element="input"
-        type="text"
-        label="Title"
-        validators={[VALIDATOR_REQUIRE()]}
-        errorText="Please enter valid title."
-        onInput={inputHandler}
-        initialValue={formState.inputs.title.value}
-        initialValid={formState.inputs.title.isValid}
-      />
-      <Input
-        id="description"
-        element="textarea"
-        label="Description"
-        validators={[VALIDATOR_MINLENGTH(5)]}
-        errorText="Please enter valid description."
-        onInput={inputHandler}
-        initialValue={formState.inputs.description.value}
-        initialValid={formState.inputs.description.isValid}
-      />
-      <Button type="submit" disabled={!formState.isValid}>
-        Update Place
-      </Button>
-    </form>
+    <React.Fragment>
+      <form className="place-form" onSubmit={placeUpdateSubmitHandler}>
+        <Input
+          id="title"
+          element="input"
+          type="text"
+          label="Title"
+          validators={[VALIDATOR_REQUIRE()]}
+          errorText="Please enter valid title."
+          onInput={inputHandler}
+          initialValue={loadedPlace.title}
+          initialValid={true}
+        />
+        <Input
+          id="description"
+          element="textarea"
+          label="Description"
+          validators={[VALIDATOR_MINLENGTH(5)]}
+          errorText="Please enter valid description."
+          onInput={inputHandler}
+          initialValue={loadedPlace.description}
+          initialValid={true}
+        />
+        <Button type="submit" disabled={!formState.isValid}>
+          Update Place
+        </Button>
+      </form>
+    </React.Fragment>
   );
 };
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useHistory } from "react-router-dom";
 import { useParams } from "react-router-dom";
 import { useForm } from "../../shared/hooks/form-hook";
@@ -8,6 +8,7 @@ import Input from "../../shared/components/FormElements/Input";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import LoadingSpinner from "../../shared/components/UIElements/LoadingSpinner";
 import ErrorModal from "../../shared/components/UIElements/ErrorModal";
+import { AuthContext } from "../../shared/context/auth-context";
 
 import {
   VALIDATOR_MINLENGTH,
@@ -17,6 +18,7 @@ import {
 import "./NewPlace.css";
 
 const UpdatePlace = () => {
+  const auth = useContext(AuthContext);
   const history = useHistory();
   const placeId = useParams().placeId;
   const [loadedPlace, setLoadedPlace] = useState([]);
@@ -83,7 +85,7 @@ const UpdatePlace = () => {
         raw,
         myHeaders
       );
-      history.push("/");
+      history.push("/" + auth.userID + "/places");
     } catch (err) {}
   };
 

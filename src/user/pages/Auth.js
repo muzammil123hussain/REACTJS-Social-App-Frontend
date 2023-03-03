@@ -2,6 +2,7 @@ import React, { useState, useContext } from "react";
 import Input from "../../shared/components/FormElements/Input";
 import Button from "../../shared/components/FormElements/Button";
 import Card from "../../shared/components/UIElements/Card";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 import {
   VALIDATOR_EMAIL,
   VALIDATOR_MINLENGTH,
@@ -134,10 +135,11 @@ const Auth = () => {
             id="password"
             type="password"
             label="Password"
-            validators={[VALIDATOR_MINLENGTH(8)]}
+            validators={[VALIDATOR_MINLENGTH(6)]}
             errorText="Please enter valid Password at least 8 char"
             onInput={inputHandler}
           />
+          {!isLoginMode && <ImageUpload center id="image" />}
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "LOGIN" : "SIGNUP"}
           </Button>

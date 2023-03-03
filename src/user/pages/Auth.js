@@ -43,6 +43,7 @@ const Auth = () => {
         {
           ...formState.inputs,
           name: undefined,
+          image: undefined,
         },
         formState.inputs.email.isValid && formState.inputs.password.isValid
       );
@@ -54,6 +55,10 @@ const Auth = () => {
             value: "",
             isValid: false,
           },
+          image: {
+            value: null,
+            isValid: false,
+          },
         },
         false
       );
@@ -63,6 +68,7 @@ const Auth = () => {
 
   const authSubmitHandler = async (event) => {
     event.preventDefault();
+    console.log(formState.inputs);
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
     // eslint-disable-next-line
@@ -139,7 +145,9 @@ const Auth = () => {
             errorText="Please enter valid Password at least 8 char"
             onInput={inputHandler}
           />
-          {!isLoginMode && <ImageUpload center id="image" />}
+          {!isLoginMode && (
+            <ImageUpload center id="image" onInput={inputHandler} />
+          )}
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "LOGIN" : "SIGNUP"}
           </Button>

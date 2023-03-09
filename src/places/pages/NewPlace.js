@@ -44,7 +44,7 @@ const NewPlace = () => {
     event.preventDefault();
     try {
       var myHeaders = new Headers();
-      myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Bearer " + auth.token);
 
       const formData = new FormData();
       formData.append("title", formState.inputs.title.value);
@@ -55,11 +55,12 @@ const NewPlace = () => {
 
       // eslint-disable-next-line
       var response;
-      
+
       response = await sendRequest(
         "http://localhost:5000/api/places",
         "POST",
-        formData
+        formData,
+        myHeaders
       );
       history.push("/");
     } catch (err) {}

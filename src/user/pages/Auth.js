@@ -87,7 +87,7 @@ const Auth = () => {
           raw,
           myHeaders
         );
-        auth.login(response.user.id);
+        auth.login(response.userId, response.token);
       } catch (err) {}
     } else {
       try {
@@ -102,7 +102,7 @@ const Auth = () => {
           "POST",
           formData
         );
-        auth.login(response.user.id);
+        auth.login(response.userId, response.token);
       } catch (err) {}
     }
   };

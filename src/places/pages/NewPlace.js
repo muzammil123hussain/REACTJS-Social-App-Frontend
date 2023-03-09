@@ -12,6 +12,7 @@ import "./NewPlace.css";
 import { useForm } from "../../shared/hooks/form-hook";
 import { useHttpClient } from "../../shared/hooks/http-hook";
 import { AuthContext } from "../../shared/context/auth-context";
+import ImageUpload from "../../shared/components/FormElements/ImageUpload";
 
 const NewPlace = () => {
   const auth = useContext(AuthContext);
@@ -32,6 +33,10 @@ const NewPlace = () => {
         value: "",
         isValid: false,
       },
+      image: {
+        value: "",
+        isValid: false,
+      },
     },
     false
   );
@@ -41,23 +46,22 @@ const NewPlace = () => {
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
 
+      const formData = new FormData();
+      formData.append("title", formState.inputs.title.value);
+      formData.append("description", formState.inputs.description.value);
+      formData.append("address", formState.inputs.address.value);
+      formData.append("creator", auth.userID);
+      formData.append("image", formState.inputs.image.value);
+
       // eslint-disable-next-line
-      var response, raw;
-
-      raw = JSON.stringify({
-        title: formState.inputs.title.value,
-        description: formState.inputs.description.value,
-        address: formState.inputs.address.value,
-        creator: auth.userID,
-      });
-
+      var response;
+      
       response = await sendRequest(
         "http://localhost:5000/api/places",
         "POST",
-        raw,
-        myHeaders
+        formData
       );
-      history.push('/')
+      history.push("/");
     } catch (err) {}
   };
 
@@ -90,6 +94,11 @@ const NewPlace = () => {
           validators={[VALIDATOR_REQUIRE()]}
           errorText="Please enter a valid address."
           onInput={inputHandler}
+        />
+        <ImageUpload
+          id="image"
+          onInput={inputHandler}
+          errorText="Please select Image"
         />
         <Button type="submit" disabled={!formState.isValid}>
           ADD PLACE

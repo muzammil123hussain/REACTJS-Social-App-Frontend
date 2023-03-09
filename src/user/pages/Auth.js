@@ -91,17 +91,16 @@ const Auth = () => {
       } catch (err) {}
     } else {
       try {
-        raw = JSON.stringify({
-          name: formState.inputs.name.value,
-          email: formState.inputs.email.value,
-          password: formState.inputs.password.value,
-        });
+        const formData = new FormData();
+        formData.append("name", formState.inputs.name.value);
+        formData.append("email", formState.inputs.email.value);
+        formData.append("password", formState.inputs.password.value);
+        formData.append("image", formState.inputs.image.value);
 
         response = await sendRequest(
           "http://localhost:5000/api/users/signup",
           "POST",
-          raw,
-          myHeaders
+          formData
         );
         auth.login(response.user.id);
       } catch (err) {}
@@ -146,7 +145,12 @@ const Auth = () => {
             onInput={inputHandler}
           />
           {!isLoginMode && (
-            <ImageUpload center id="image" onInput={inputHandler} />
+            <ImageUpload
+              center
+              id="image"
+              onInput={inputHandler}
+              errorText="Please select Image"
+            />
           )}
           <Button type="submit" disabled={!formState.isValid}>
             {isLoginMode ? "LOGIN" : "SIGNUP"}

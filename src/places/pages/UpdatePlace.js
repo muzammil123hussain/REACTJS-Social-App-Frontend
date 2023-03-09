@@ -70,6 +70,7 @@ const UpdatePlace = () => {
     try {
       var myHeaders = new Headers();
       myHeaders.append("Content-Type", "application/json");
+      myHeaders.append("Authorization", "Bearer " + auth.token);
 
       // eslint-disable-next-line
       var response, raw;

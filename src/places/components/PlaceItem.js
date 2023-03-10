@@ -32,12 +32,13 @@ const PlaceItem = (props) => {
     try {
       var myHeaders = new Headers();
       myHeaders.append("Authorization", "Bearer " + auth.token);
-      
+
       // eslint-disable-next-line
       var response;
       response = await sendRequest(
         "http://localhost:5000/api/places/" + props.id,
         "DELETE",
+        null,
         myHeaders
       );
       props.onDelete(props.id);

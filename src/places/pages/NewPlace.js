@@ -50,7 +50,6 @@ const NewPlace = () => {
       formData.append("title", formState.inputs.title.value);
       formData.append("description", formState.inputs.description.value);
       formData.append("address", formState.inputs.address.value);
-      formData.append("creator", auth.userID);
       formData.append("image", formState.inputs.image.value);
 
       // eslint-disable-next-line

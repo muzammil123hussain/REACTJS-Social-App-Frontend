@@ -1,6 +1,8 @@
 # Getting Started with this project
-## 1. Clone the repo
-## 2. Run script
+
+### 1. Clone the repo
+### 2. npm install
+### 3. npm start
 
 ## Available Scripts
 
